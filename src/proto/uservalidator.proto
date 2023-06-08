@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package proto;
+option go_package = "./src/proto;proto";
+
+service UserValidator{
+	rpc IsUsernameExists(UsernameRequest) returns (Found) {}
+	rpc IsEmailExists(EmailRequest) returns (Found) {}
+	rpc IsUserExists(EmailOrUsernameRequest) returns (Found) {}
+}
+
+message UsernameRequest {
+	string username = 1;
+}
+
+message EmailRequest {
+	string email = 1;
+}
+
+message EmailOrUsernameRequest {
+	string email_or_username = 1;
+}
+
+message Found {
+	bool found = 1;
+}

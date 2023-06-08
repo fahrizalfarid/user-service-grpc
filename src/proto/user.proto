@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package proto;
+option go_package = "./src/proto;proto";
+
+service User{
+	rpc Create(CreateRequest) returns (CreateResponse) {}
+	rpc GetById(GetByIdRequest) returns (UserResponse) {}
+	rpc Find(FindRequest) returns (stream UserFound) {}
+	rpc FindWithArray(FindRequest) returns (UserFoundArray) {}
+	rpc Login(LoginRequest) returns (LoginResponse) {}
+	rpc UpdateById(UpdateRequest) returns (UserResponse) {}
+	rpc DeleteById(DeleteRequest) returns (Error) {}
+}
+
+message CreateRequest {
+	string firstname = 1;
+	string lastname = 2;
+	string email = 3;
+	int64 created_at = 4;
+	string phone = 5;
+	string address = 6;
+	int64 deleted_at = 7;
+    string username = 8;
+    string password = 9;
+}
+
+message CreateResponse {
+	int64 id = 1;
+}
+
+message Error {
+	string message = 1;
+}
+
+message GetByIdRequest {
+	int64 id = 1;
+}
+
+message UserResponse {
+    int64 id = 1;
+	string firstname = 2;
+	string lastname = 3;
+	string email = 4;
+	string created_at = 5;
+	string phone = 6;
+	string address = 7;
+	string username = 8;
+}
+
+message UserFound {
+    int64 id = 1;
+	string username = 2;
+	string fullname = 3;
+	string email = 4;
+}
+
+message UserFoundArray {
+    repeated UserFound users = 1;
+}
+
+message UsersResponse {
+    repeated UserResponse users = 1;
+}
+
+message FindRequest {
+	string word = 1;
+}
+
+message LoginRequest {
+    string username_or_email = 1;
+}
+
+message LoginResponse {
+	int64 id = 1;
+	string username = 2;
+	string password = 3;
+}
+
+message UpdateRequest {
+	string firstname = 1;
+	string lastname = 2;
+	string email = 3;
+	string phone = 4;
+	string address = 5;
+	string username = 6;
+	string password = 7;
+}
+
+message DeleteRequest{}
