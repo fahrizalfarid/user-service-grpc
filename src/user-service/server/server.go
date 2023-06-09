@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net"
+	"sync"
 
 	"github.com/fahrizalfarid/user-service-grpc/conf"
 	pb "github.com/fahrizalfarid/user-service-grpc/src/proto"
@@ -33,6 +34,7 @@ func RunUserSrv(port string) error {
 	user := &delivery.User{
 		UserUsecase:    userUsecase,
 		Authentication: auth,
+		Mu:             sync.Mutex{},
 	}
 
 	pb.RegisterUserServer(s, user)

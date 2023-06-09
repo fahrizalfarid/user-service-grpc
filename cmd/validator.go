@@ -5,6 +5,10 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"time"
 
 	"github.com/fahrizalfarid/user-service-grpc/conf"
 	validator "github.com/fahrizalfarid/user-service-grpc/src/validator-service/server"
@@ -28,8 +32,17 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			panic(err)
 		}
+		quit := make(chan os.Signal, 1)
+		signal.Notify(quit, os.Interrupt)
 
-		panic(validator.RunUserValidatorSrv(conf.GetValidatorSrv()))
+		go func() {
+			log.Fatal(validator.RunUserValidatorSrv(conf.GetValidatorSrv()))
+		}()
+
+		<-quit
+		fmt.Println("shutdown")
+		time.Sleep(5 * time.Second)
+		os.Exit(1)
 	},
 }
 

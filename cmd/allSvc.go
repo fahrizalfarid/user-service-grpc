@@ -6,6 +6,9 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"time"
 
 	"github.com/fahrizalfarid/user-service-grpc/conf"
 	api "github.com/fahrizalfarid/user-service-grpc/src/api/server"
@@ -50,6 +53,9 @@ func runAllSrv(cmd *cobra.Command, args []string) {
 		panic(err)
 	}
 
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+
 	go func() {
 		log.Fatal(user.RunUserSrv(conf.GetUserSrv()))
 	}()
@@ -63,5 +69,9 @@ func runAllSrv(cmd *cobra.Command, args []string) {
 	}()
 
 	fmt.Println("all services called")
-	select {}
+
+	<-quit
+	fmt.Println("shutdown")
+	time.Sleep(5 * time.Second)
+	os.Exit(1)
 }

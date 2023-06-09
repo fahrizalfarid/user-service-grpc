@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"context"
+	"sync"
 
 	"github.com/fahrizalfarid/user-service-grpc/src/constant"
 	"github.com/fahrizalfarid/user-service-grpc/src/model"
@@ -15,6 +16,7 @@ type User struct {
 	pb.UnimplementedUserServer
 	UserUsecase    model.UserSvcUsecase
 	Authentication utils.Authentication
+	Mu             sync.Mutex
 }
 
 func (u *User) getToken(ctx context.Context) (*utils.Token, error) {
@@ -99,6 +101,7 @@ func (u *User) Find(req *pb.FindRequest, stream pb.User_FindServer) error {
 		return err
 	}
 
+	u.Mu.Lock()
 	user, err := u.UserUsecase.GetUserByEmailOrUsername(stream.Context(), req.Word)
 	if err != nil {
 		return err
@@ -116,6 +119,7 @@ func (u *User) Find(req *pb.FindRequest, stream pb.User_FindServer) error {
 			return err
 		}
 	}
+	u.Mu.Unlock()
 
 	return nil
 }
